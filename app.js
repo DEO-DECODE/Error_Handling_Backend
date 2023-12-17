@@ -1,14 +1,19 @@
 import express from "express";
 const app = express();
-app.get(
-  "/",
-  (req, res, next) => {
-    console.log("A");
-     return next(new Error("Custom error"));
+class errorHandler extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
   }
-);
+}
+app.get("/", (req, res, next) => {
+  console.log("A");
+  return next(new errorHandler("Unauthorized", 401));
+});
 app.use((err, req, res, next) => {
-  res.status(404).json({
+  err.statusCode = err.statusCode || 500;
+  err.message = err.message || "Internal Server Error";
+  res.status(err.statusCode).json({
     message: err.message,
   });
 });
