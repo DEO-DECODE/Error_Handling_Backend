@@ -4,15 +4,10 @@ app.get(
   "/",
   (req, res, next) => {
     console.log("A");
-  },
-  (req, res, next) => {
-    console.log("B");
-  },
-  (req, res, next) => {
-    console.log("C");
+     return next(new Error("Custom error"));
   }
 );
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   res.status(404).json({
     message: err.message,
   });
